@@ -18,6 +18,29 @@ router.get('/', function (req, res, next) {
 
 });
 
+router.get('/search', function (req, res, next) {
+
+    let searchObject = {
+        "id": req.query.id,
+        "name": req.query.name
+    }
+
+
+    pieRepo.search(searchObject, function (data) {
+
+        res.status(200).json({
+            "status": 200,
+            "statusText": "OK",
+            "message": "All pies retrieved",
+            "data": data
+        });
+
+    }, function (err) {
+        next(err);
+    });
+
+});
+
 router.get('/:id', function (req, res, next) {
     pieRepo.getById(req.params.id, function (data) {
 
@@ -47,6 +70,7 @@ router.get('/:id', function (req, res, next) {
     ;
 
 });
+
 
 app.use('/api/', router);
 

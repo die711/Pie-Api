@@ -2,12 +2,6 @@ let fs = require("fs");
 
 const FILE_NAME = './assets/pies.json'
 
-
-
-
-
-
-
 let pieRepo = {
     get: function (resolve, reject) {
         fs.readFile(FILE_NAME, function (err, data) {
@@ -17,19 +11,19 @@ let pieRepo = {
                 reject(err)
             } else {
 
-               resolve(JSON.parse(data));
+                resolve(JSON.parse(data));
             }
 
         })
     },
 
 
-    getById: function (id, resolve, reject){
-        fs.readFile(FILE_NAME,function (err,data){
-            if(err){
+    getById: function (id, resolve, reject) {
+        fs.readFile(FILE_NAME, function (err, data) {
+            if (err) {
                 reject(err);
-            }else{
-                let pie =JSON.parse(data).find(p=> p.id == id);
+            } else {
+                let pie = JSON.parse(data).find(p => p.id == id);
                 resolve(pie)
             }
 
@@ -38,13 +32,14 @@ let pieRepo = {
 
     },
 
-    search: function (searchObject,resolve,reject){
-        fs.readFile(FILE_NAME, function (err,data) {
-            if(err){
+    search: function (searchObject, resolve, reject) {
+
+        fs.readFile(FILE_NAME, function (err, data) {
+            if (err) {
                 reject(err);
-            }else{
-                let pies =JSON.parse(data);
-                if(searchObject){
+            } else {
+                let pies = JSON.parse(data);
+                if (searchObject) {
 
                     //example object
                     // let searchObject ={
@@ -52,12 +47,12 @@ let pieRepo = {
                     //     "name" : "A"
                     // }
 
-                    // pies => pies.filter(
-                    //     p=>(searchObject.id?p.id == searchObject.id : true) &&
-                    //
-                    // )
+                    pies = pies.filter(
+                        p => (searchObject.id ? p.id == searchObject.id : true) &&
+                            (searchObject.name ? p.name.toLowerCase().indexOf(searchObject.name.toLowerCase()) >= 0 : true)
+                    );
                 }
-
+                resolve(pies);
             }
         });
     }
