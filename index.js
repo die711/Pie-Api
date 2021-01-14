@@ -70,8 +70,24 @@ router.get('/:id', function (req, res, next) {
     ;
 
 });
+router.post('/', function (req, res, next) {
+
+    pieRepo.Insert(req.body, function (data) {
+        res.status(201).json({
+            "status": 201,
+            "statusText": "Created",
+            "message": "New Pie Added",
+            "data": data
+        });
+    }, function (err) {
+        next(err);
+    });
 
 
+});
+
+
+app.use(express.json());
 app.use('/api/', router);
 
 var server = app.listen(5000, function () {
