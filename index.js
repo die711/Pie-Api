@@ -1,6 +1,7 @@
 let express = require('express');
 let app = express();
-let pieRepo = require('./repos/pieRepo')
+let pieRepo = require('./repos/pieRepo');
+let errorHelper = require('./helpers/errorHelpers');
 
 let router = express.Router();
 
@@ -14,6 +15,8 @@ router.get('/', function (req, res, next) {
             "message:": "All pies retrieved",
             "data": data
         });
+    }, function (err) {
+        next(err);
     });
 
 });
@@ -86,9 +89,123 @@ router.post('/', function (req, res, next) {
 
 });
 
+router.put('/:id', function (req, res, next) {
+
+    pieRepo.getById(req.params.id, function (data) {
+
+        if (data) {
+
+            pieRepo.update(req.body, req.params.id, function (data) {
+                res.status(200).json({
+                    "status": 200,
+                    "statusText": "Created",
+                    "message": `Pie ${req.params.id} updated.`,
+                    "data": data
+                });
+
+            });
+
+        } else {
+            res.status(404).json({
+                "status": 404,
+                "statusText": "Not Found",
+                "message": `The Pie ${req.params.id} could not be found.`,
+                "error": {
+                    "code": "NOT_FOUND",
+                    "message": `The Pie ${req.params.id} could not be found.`
+                }
+            });
+        }
+
+
+    });
+
+
+});
+
+router.patch('/:id', function (req, res, next) {
+
+    pieRepo.getById(req.params.id, function (data) {
+
+        if (data) {
+
+            pieRepo.update(req.body, req.params.id, function (data) {
+                res.status(200).json({
+                    "status": 200,
+                    "statusText": "Created",
+                    "message": `Pie ${req.params.id} updated.`,
+                    "data": data
+                });
+
+            });
+
+        } else {
+            res.status(404).json({
+                "status": 404,
+                "statusText": "Not Found",
+                "message": `The Pie ${req.params.id} could not be found.`,
+                "error": {
+                    "code": "NOT_FOUND",
+                    "message": `The Pie ${req.params.id} could not be found.`
+                }
+            });
+        }
+
+
+    });
+
+
+});
+
+router.delete('/:id', function (req, res, next) {
+    pieRepo.getById(req.params.id, function (data) {
+
+
+        if (data) {
+            pieRepo.delete(req.params.id, function (data) {
+
+                res.status(200).json({
+                    "status": 200,
+                    "statusText": "Created",
+                    "message": `The Pie ${req.params.id} is deleted`,
+                    "data": `Pie ${req.params.id} deleted`
+
+                });
+            });
+        }else{
+            res.status(404).json({
+                "status": 404,
+                "statusText": "Not Found",
+                "message": `The Pie ${req.params.id} could not be found.`,
+                "error": {
+                    "code": "NOT_FOUND",
+                    "message": `The Pie ${req.params.id} could not be found.`
+                }
+
+            });
+        }
+
+
+    }, function (err){
+        next(err);
+    });
+
+
+});
+
+
+
 
 app.use(express.json());
 app.use('/api/', router);
+
+app.use(errorHelper.logErrorsToConsole);
+app.use(errorHelper.logErrorsToFile);
+app.use(errorHelper.clientErroHandler);
+app.use(errorHelper.errorHandler);
+
+
+
 
 var server = app.listen(5000, function () {
 
